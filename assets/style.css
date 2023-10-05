@@ -19,6 +19,15 @@ body {
     padding: 30px;
 }
 
+.quiz {
+    padding: 20px 0;
+}
+
+.quiz h2 {
+
+    
+}
+
 .start {
     position: absolute;
     height: 100%;
@@ -31,7 +40,12 @@ body {
 
 }
 
-button {
-    border: none;
+.box h1 {
+    font-weight: 15px;
+    color: red;
+    font-weight: 600;
+    border-bottom: 1px solid #333;
+    padding-bottom: 10px;
 
+    
 }
