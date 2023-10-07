@@ -19,6 +19,11 @@ body {
     padding: 30px;
 }
 
+.correct-answer {
+    background-color: green;
+    color: white;
+  }
+
 .quiz {
     padding: 20px 0;
 }
@@ -37,13 +42,27 @@ font-weight: 600;
 
 }
 
+.restart {
+    position: absolute;
+}
+
 #restart-button {
-    padding: 3px;
+    display: block;
+    padding: 10px;
+    color:white;
+    background: black;
+    border: 0;
+    border-radius: 5px;
+    cursor: pointer;
+    margin: 15px 450px 0px;
+    width: 100px;
+ 
 }
 
 
 .next {
     position: absolute;
+    
 
 }
 
@@ -62,11 +81,20 @@ font-weight: 600;
 
 .start {
     position: absolute;
-    display: flex;
-    flex-direction: column;
-    font: Arial, Helvetica, sans-serif;
-    top: 70%;
     
+}
+
+#start-button {
+    padding: 10px;
+    color:white;
+    background: black;
+    border: 0;
+    border-radius: 5px;
+    cursor: pointer;
+    margin: 15px 50px 0px;
+    width: 100px;
+    z-index: 1;
+ 
 }
 
 .box h1 {
