@@ -35,10 +35,8 @@ font-weight: 600;
 }
 
 #start-button {
-    position:absolute;
-    display: flex;
-    padding:3px;
-    left: 250px;
+    display: block;
+    margin: 0 auto;
 
 }
 
@@ -54,9 +52,25 @@ font-weight: 600;
     border: 0;
     border-radius: 5px;
     cursor: pointer;
-    margin: 15px 450px 0px;
+    margin: 15px 700px 0px;
     width: 100px;
  
+}
+
+.ending-screen {
+    display: none;
+  }
+  
+  
+  .ending-screen h1 {
+    text-align: center;
+    margin-top: -175px; /* Adjust the margin-top value as needed */
+}
+
+.ending-screen h2 {
+    text-align: center;
+    margin-top: 15px; /* Adjust the margin-top value as needed */
+    font-size: 15px;
 }
 
 
@@ -80,7 +94,10 @@ font-weight: 600;
 }
 
 .start {
-    position: absolute;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 10vh;
     
 }
 

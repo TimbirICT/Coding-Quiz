@@ -3,14 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Multiple Choice Javascript Quiz</title>
+    <title>Multiple Choice JavaScript Quiz</title>
     <link rel="stylesheet" href="./assets/style.css">
 </head>
 <body>
-   
 
     <div class="box">
-        <h1>Javascript Quiz</h1>
+        <h1>JavaScript Quiz</h1>
         <div class="quiz">
             <h2 id="questions">Question</h2>
             <div id="answers">
@@ -25,19 +24,26 @@
             <div class="next">
                 <button id="next-button">Next</button>
             </div>
-            <div class="restart">
-                <button id="restart-button">Restart</button>
-            </div>
             <div class="score">
                 <h2 id="score">Score: 0</h2>
             </div>
-    
-
+            <div class="message">
+                <h2 id="message"></h2>
+            </div>
         </div>
     </div>
-    
-    
-   
+
+    <div id="ending-screen" class="ending-screen" style="display: none">
+        <h1>Quiz Finished</h1>
+        <h2>Top 5 High Scores:</h2>
+        <ol id="high-scores">
+            <!-- High scores will be displayed here -->
+        </ol>
+        <div class="restart">
+            <button id="restart-button">Restart</button>
+        </div>
+    </div>
+
     <script src="./assets/script.js"></script>
 </body>
 </html>
