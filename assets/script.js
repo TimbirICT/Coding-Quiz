@@ -1,6 +1,7 @@
 const questionsElement = document.getElementById("questions");
 const answerButton = document.getElementById("answers");
 const nextButton = document.getElementById("next-button");
+const finishButton = document.getElementById("finish-button");
 const restartButton = document.getElementById("restart-button");
 const startButton = document.getElementById("start-button");
 const scoreElement = document.getElementById("score");
@@ -149,9 +150,14 @@ const highScores = JSON.parse(localStorage.getItem("highScores")) || [];
 function updateHighScores() {
   highScoresList.innerHTML = "";
   highScores.sort((a, b) => b - a);
-  for (let i = 0; i < Math.min(5, highScores.length); i++) {
+
+  // Remove duplicate scores
+  const uniqueHighScores = [...new Set(highScores)];
+
+  const top5Scores = uniqueHighScores.slice(0, 5);
+  for (let i = 0; i < top5Scores.length; i++) {
     const li = document.createElement("li");
-    li.textContent = `Score: ${highScores[i]}`;
+    li.textContent = `Score: ${top5Scores[i]}`;
     highScoresList.appendChild(li);
   }
 }
@@ -160,7 +166,8 @@ function showEndingScreen() {
   endingScreen.style.display = "block";
   questionsElement.style.display = "none";
   answerButton.style.display = "none";
-  restartButton.style.display = "block"; // Show restart button
+  restartButton.style.display = "block";
+  finishButton.style.display = "none"; // Hide the Finish button
   updateHighScores();
 }
 
@@ -184,15 +191,28 @@ nextButton.addEventListener("click", () => {
     currentQ++;
     answered = false;
     showQuestion();
-    nextButton.style.display = "none"; // Hide the "Next" button after clicking it
+    nextButton.style.display = "none";
+
+    if (currentQ === questions.length - 1) {
+      // If it's the last question, show the Finish button only when an answer is selected
+      finishButton.style.display = answered ? "block" : "none";
+    }
+  }
+});
+
+finishButton.addEventListener("click", () => {
+  if (currentQ === questions.length - 1 && answered) {
+    // Proceed to the end screen when Finish button is clicked after answering the last question
+    saveScore(score); // Save the score
+    showEndingScreen();
   }
 });
 
 restartButton.addEventListener("click", restartQuiz);
 
 function restartQuiz() {
-  beginQuiz();
-  startQuiz(); // Added to immediately start the quiz after restart
+  // Refresh the page to restart the quiz
+  window.location.reload();
 }
 
 function updateScoreDisplay(isCorrect) {
@@ -205,7 +225,7 @@ function checkAnswer(isCorrect) {
     const buttons = answerButton.querySelectorAll(".btn");
 
     buttons.forEach((button) => {
-      button.disabled = true; // Disable all buttons after answering
+      button.disabled = true;
       if (button.getAttribute("data-correct") === "true") {
         button.style.backgroundColor = "green";
       } else {
@@ -220,12 +240,13 @@ function checkAnswer(isCorrect) {
     answered = true;
     updateScoreDisplay(isCorrect);
 
-    if (currentQ >= questions.length - 1) {
-      // If it's the last question, show the ending screen
-      showEndingScreen();
-    } else {
-      // Show the "Next" button to proceed to the next question
+    if (currentQ < questions.length - 1) {
       nextButton.style.display = "block";
+      finishButton.style.display = "none"; // Hide the Finish button
+    } else {
+      // If it's the last question, show the Finish button only when an answer is selected
+      finishButton.style.display = answered ? "block" : "none";
+      nextButton.style.display = "none"; // Hide the Next button
     }
   }
 }
@@ -235,24 +256,24 @@ function startQuiz() {
   score = 0;
   quizStarted = true;
   startButton.style.display = "none";
-  nextButton.style.display = "none";
   restartButton.style.display = "none";
   scoreElement.textContent = "Score: 0";
-  endingScreen.style.display = "none"; // Hide the ending screen
+  endingScreen.style.display = "none";
 }
 
 function beginQuiz() {
   quizStarted = false;
-  startButton.style.display = "block";
-  nextButton.style.display = "none";
-  restartButton.style.display = "none";
-  endingScreen.style.display = "none"; // Hide the ending screen
   questionsElement.textContent = "Press 'Start' to begin the quiz.";
   answerButton.innerHTML = "";
   messageElement.textContent = "";
-
-  // Clear the previous high scores
-  highScores.length = 0;
+  currentQ = 0;
+  score = 0;
+  const buttons = answerButton.querySelectorAll(".btn");
+  buttons.forEach((button) => {
+    button.style.backgroundColor = "";
+    button.disabled = false;
+  });
+  nextButton.style.display = "none";
 }
 
 function showQuestion() {
@@ -272,11 +293,21 @@ function showQuestion() {
     button.addEventListener("click", () => checkAnswer(answer.correct));
     answerButton.appendChild(button);
 
+    // Reset the background color of the button to its default state
+    button.style.backgroundColor = "";
+
     // Add a data-correct attribute to the correct answer button
     if (answer.correct) {
       button.setAttribute("data-correct", "true");
     }
   });
+
+  if (currentQ === questions.length - 1) {
+    // If it's the last question, show the finish button only if an answer is selected
+    finishButton.style.display = answered ? "block" : "none";
+  } else {
+    finishButton.style.display = "none";
+  }
 }
 
 beginQuiz();

@@ -45,14 +45,14 @@ font-weight: 600;
 }
 
 #restart-button {
-    display: block;
+    display: none;
     padding: 10px;
     color:white;
     background: black;
     border: 0;
     border-radius: 5px;
     cursor: pointer;
-    margin: 15px 700px 0px;
+    margin: 0 370px 0px;
     width: 100px;
  
 }
@@ -72,6 +72,11 @@ font-weight: 600;
     margin-top: 15px; /* Adjust the margin-top value as needed */
     font-size: 15px;
 }
+#high-scores {
+    text-align: center;
+    margin-top: 15px; /* Adjust the margin-top value as needed */
+    font-size: 12px;
+}
 
 
 .next {
@@ -81,6 +86,19 @@ font-weight: 600;
 }
 
 #next-button {
+    display: block;
+    padding: 10px;
+    color:white;
+    background: black;
+    border: 0;
+    border-radius: 5px;
+    cursor: pointer;
+    margin: 15px 215px 0px;
+    width: 100px;
+ 
+}
+
+#finish-button {
     display: block;
     padding: 10px;
     color:white;
