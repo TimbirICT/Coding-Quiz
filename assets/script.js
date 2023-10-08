@@ -188,10 +188,12 @@ nextButton.addEventListener("click", () => {
   }
 });
 
-restartButton.addEventListener("click", () => {
+restartButton.addEventListener("click", restartQuiz);
+
+function restartQuiz() {
   beginQuiz();
   startQuiz(); // Added to immediately start the quiz after restart
-});
+}
 
 function updateScoreDisplay(isCorrect) {
   messageElement.textContent = isCorrect ? "Correct!" : "Incorrect!";
@@ -248,9 +250,6 @@ function beginQuiz() {
   questionsElement.textContent = "Press 'Start' to begin the quiz.";
   answerButton.innerHTML = "";
   messageElement.textContent = "";
-
-  // Reset the current question index
-  currentQ = 0;
 
   // Clear the previous high scores
   highScores.length = 0;
