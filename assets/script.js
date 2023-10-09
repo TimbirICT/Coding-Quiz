@@ -1,253 +1,126 @@
-const questionsElement = document.getElementById("questions");
-const answerButton = document.getElementById("answers");
-const nextButton = document.getElementById("next-button");
-const finishButton = document.getElementById("finish-button");
-const restartButton = document.getElementById("restart-button");
-const startButton = document.getElementById("start-button");
-const scoreElement = document.getElementById("score");
-const messageElement = document.getElementById("message");
-const endingScreen = document.getElementById("ending-screen");
-const highScoresList = document.getElementById("high-scores");
+var elements = {
+  questions: document.getElementById("questions"),
+  answerButton: document.getElementById("answers"),
+  nextButton: document.getElementById("next-button"),
+  restartButton: document.getElementById("restart-button"),
+  startButton: document.getElementById("start-button"),
+  score: document.getElementById("score"),
+  message: document.getElementById("message"),
+  endingScreen: document.getElementById("ending-screen"),
+  highScoresList: document.getElementById("high-scores"),
+};
 
-var answer1 = "An array is a container object that holds a fixed number of values of a single type";
-var answer2 = "A function that is called when an event occurs";
-var answer3 = "A function is a block of code that can be used repeatedly";
-var answer4 = "A variable is a value that can be changed";
-var answer5 = "Stringify is a function that returns a string representation of an object";
-var answer6 = "A programming construct that allows you to store and reuse a block of code in JavaScript";
+var answers = [
+  "An array is a container object that holds a fixed number of values of a single type",
+  "A function that is called when an event occurs",
+  "A function is a block of code that can be used repeatedly",
+  "A variable is a value that can be changed",
+  "Stringify is a function that returns a string representation of an object",
+  "A programming construct that allows you to store and reuse a block of code in JavaScript",
+];
 
 var questions = [
   {
     question: "What is an array?",
     answers: [
-      {
-        text: answer1,
-        correct: true,
-      },
-      {
-        text: "An array is a function that is called when an event occurs.",
-        correct: false,
-      },
-      {
-        text: "An array is a block of code that can be used repeatedly.",
-        correct: false,
-      },
-      {
-        text: "An array is a value that can be changed.",
-        correct: false,
-      },
+      { text: answers[0], correct: true },
+      { text: "An array is a function that is called when an event occurs.", correct: false },
+      { text: "An array is a block of code that can be used repeatedly.", correct: false },
+      { text: "An array is a value that can be changed.", correct: false },
     ],
   },
   {
     question: "What is an event listener?",
     answers: [
-      {
-        text: "A function that listens for errors in JS code.",
-        correct: false,
-      },
-      {
-        text: "A method used to find data from an external API",
-        correct: false,
-      },
-      {
-        text: answer2,
-        correct: true,
-      },
-      {
-        text: "A string of values that can be changed.",
-        correct: false,
-      },
+      { text: "A function that listens for errors in JS code.", correct: false },
+      { text: "A method used to find data from an external API", correct: false },
+      { text: answers[1], correct: true },
+      { text: "A string of values that can be changed.", correct: false },
     ],
   },
   {
     question: "What is a function in JS?",
     answers: [
-      {
-        text: " A data type for storing text in JavaScript.",
-        correct: false,
-      },
-      {
-        text: "A method used to find data from an external API.",
-        correct: false,
-      },
-      {
-        text: "A method used for sorting arrays.",
-        correct: false,
-      },
-      {
-        text: answer3,
-        correct: true,
-      },
+      { text: "A data type for storing text in JavaScript.", correct: false },
+      { text: "A method used to find data from an external API.", correct: false },
+      { text: "A method used for sorting arrays.", correct: false },
+      { text: answers[2], correct: true },
     ],
   },
   {
     question: "What is a variable in JS?",
     answers: [
-      {
-        text: "A construct used to manipulate classes in JavaScript.",
-        correct: false,
-      },
-      {
-        text: answer4,
-        correct: true,
-      },
-      {
-        text: "A function for performing calculations on numerical data.",
-        correct: false,
-      },
-      {
-        text: "A string of values that cannot be changed.",
-        correct: false,
-      },
+      { text: "A construct used to manipulate classes in JavaScript.", correct: false },
+      { text: answers[3], correct: true },
+      { text: "A function for performing calculations on numerical data.", correct: false },
+      { text: "A string of values that cannot be changed.", correct: false },
     ],
   },
   {
     question: "What does the stringify function do?",
     answers: [
-      {
-        text: "Converts a JSON string into a JavaScript object.",
-        correct: false,
-      },
-      {
-        text: "Converts a number to a string data type.",
-        correct: false,
-      },
-      {
-        text: answer5,
-        correct: true,
-      },
-      {
-        text: "Creates a new function in JavaScript.",
-        correct: false,
-      },
+      { text: "Converts a JSON string into a JavaScript object.", correct: false },
+      { text: "Converts a number to a string data type.", correct: false },
+      { text: answers[4], correct: true },
+      { text: "Creates a new function in JavaScript.", correct: false },
     ],
   },
   {
     question: "What is an event in JS?",
     answers: [
-      {
-        text: answer6,
-        correct: true,
-      },
-      {
-        text: "An event is a type of variable used to store data in JavaScript.",
-        correct: false,
-      },
-      {
-        text: "A type of function that calls a variable.",
-        correct: false,
-      },
-      {
-        text: "A method in JavaScript used for sorting arrays.",
-        correct: false,
-      },
+      { text: answers[5], correct: true },
+      { text: "An event is a type of variable used to store data in JavaScript.", correct: false },
+      { text: "A type of function that calls a variable.", correct: false },
+      { text: "A method in JavaScript used for sorting arrays.", correct: false },
     ],
   },
 ];
 
-const highScores = JSON.parse(localStorage.getItem("highScores")) || [];
+var currentQ = 0;
+var score = 0;
+var quizStarted = false;
+var answered = false;
 
-function updateHighScores() {
-  highScoresList.innerHTML = "";
-  highScores.sort((a, b) => b - a);
-
-  // Remove duplicate scores
-  const uniqueHighScores = [...new Set(highScores)];
-
-  const top5Scores = uniqueHighScores.slice(0, 5);
-  for (let i = 0; i < top5Scores.length; i++) {
-    const li = document.createElement("li");
-    li.textContent = `Score: ${top5Scores[i]}`;
-    highScoresList.appendChild(li);
-  }
-}
-
-function showEndingScreen() {
-  endingScreen.style.display = "block";
-  questionsElement.style.display = "none";
-  answerButton.style.display = "none";
-  restartButton.style.display = "block";
-  finishButton.style.display = "none"; // Hide the Finish button
-  updateHighScores();
-}
-
-function saveScore(score) {
-  highScores.push(score);
-  localStorage.setItem("highScores", JSON.stringify(highScores));
-}
-
-let currentQ = 0;
-let score = 0;
-let quizStarted = false;
-let answered = false;
-
-startButton.addEventListener("click", () => {
+elements.startButton.addEventListener("click", function () {
   startQuiz();
   showQuestion();
 });
 
-nextButton.addEventListener("click", () => {
+elements.nextButton.addEventListener("click", function () {
   if (answered) {
     currentQ++;
     answered = false;
     showQuestion();
-    nextButton.style.display = "none";
-
-    if (currentQ === questions.length - 1) {
-      // If it's the last question, show the Finish button only when an answer is selected
-      finishButton.style.display = answered ? "block" : "none";
-    }
+    elements.nextButton.style.display = "none";
   }
 });
 
-finishButton.addEventListener("click", () => {
-  if (currentQ === questions.length - 1 && answered) {
-    // Proceed to the end screen when Finish button is clicked after answering the last question
-    saveScore(score); // Save the score
-    showEndingScreen();
-  }
-});
-
-restartButton.addEventListener("click", restartQuiz);
+elements.restartButton.addEventListener("click", restartQuiz);
 
 function restartQuiz() {
-  // Refresh the page to restart the quiz
-  window.location.reload();
+  startQuiz();
 }
 
 function updateScoreDisplay(isCorrect) {
-  messageElement.textContent = isCorrect ? "Correct!" : "Incorrect!";
-  scoreElement.textContent = "Score: " + score;
+  elements.message.textContent = isCorrect ? "Correct!" : "Incorrect!";
+  elements.score.textContent = "Score: " + score;
 }
 
 function checkAnswer(isCorrect) {
   if (!answered) {
-    const buttons = answerButton.querySelectorAll(".btn");
+    var buttons = elements.answerButton.querySelectorAll("button.btn");
 
-    buttons.forEach((button) => {
+    buttons.forEach(function (button) {
       button.disabled = true;
-      if (button.getAttribute("data-correct") === "true") {
-        button.style.backgroundColor = "green";
-      } else {
-        button.style.backgroundColor = "red";
-      }
+      button.style.backgroundColor = button.getAttribute("data-correct") === "true" ? "green" : "red";
     });
 
-    if (isCorrect) {
-      score += 10;
-    }
-
+    if (isCorrect) score += 10;
     answered = true;
     updateScoreDisplay(isCorrect);
 
-    if (currentQ < questions.length - 1) {
-      nextButton.style.display = "block";
-      finishButton.style.display = "none"; // Hide the Finish button
-    } else {
-      // If it's the last question, show the Finish button only when an answer is selected
-      finishButton.style.display = answered ? "block" : "none";
-      nextButton.style.display = "none"; // Hide the Next button
-    }
+    if (currentQ >= questions.length - 1) showEndingScreen();
+    else elements.nextButton.style.display = "block";
   }
 }
 
@@ -255,59 +128,111 @@ function startQuiz() {
   currentQ = 0;
   score = 0;
   quizStarted = true;
-  startButton.style.display = "none";
-  restartButton.style.display = "none";
-  scoreElement.textContent = "Score: 0";
-  endingScreen.style.display = "none";
+  elements.startButton.style.display = "none";
+  elements.nextButton.style.display = elements.restartButton.style.display = "none";
+  elements.score.textContent = "Score: 0";
+  elements.endingScreen.style.display = "none";
+  showQuestion();
+}
+
+const timerElement = document.getElementById("timer");
+const questionTime = 10; // 10 seconds per question
+let timeLeft = questionTime;
+let timerInterval;
+
+function startTimer() {
+  timeLeft = questionTime;
+  timerElement.textContent = `Time: ${timeLeft} seconds`;
+  timerInterval = setInterval(function () {
+    timeLeft--;
+    if (timeLeft <= 0) {
+      clearInterval(timerInterval);
+      // Handle when time runs out (e.g., show correct answer or move to the next question)
+      showQuestion(); // For now, move to the next question
+    } else {
+      timerElement.textContent = `Time: ${timeLeft} seconds`;
+    }
+  }, 1000);
+}
+
+function stopTimer() {
+  clearInterval(timerInterval);
+  timerElement.textContent = "";
+}
+
+function showQuestion() {
+  if (currentQ < questions.length) {
+    const currentQuestion = questions[currentQ];
+    elements.questions.textContent = currentQuestion.question;
+    elements.answerButton.innerHTML = "";
+
+    currentQuestion.answers.forEach(answer => {
+      const button = document.createElement("button");
+      button.innerText = answer.text;
+      button.classList.add("btn");
+
+      button.addEventListener("click", () => {
+        if (!answered) {
+          checkAnswer(answer.correct);
+          stopTimer(); // Stop the timer when an answer is clicked
+        }
+      });
+
+      elements.answerButton.appendChild(button);
+
+      if (answer.correct) {
+        button.setAttribute("data-correct", "true");
+      }
+    });
+
+    // Show the timer when questions are displayed
+    const timerElement = document.getElementById("timer");
+    timerElement.style.display = "block";
+
+    // Start the timer
+    startTimer();
+
+  } else {
+    // If there are no more questions, hide the timer
+    const timerElement = document.getElementById("timer");
+    timerElement.style.display = "none";
+  }
+  }
+
+
+
+function showEndingScreen() {
+  elements.endingScreen.style.display = "block";
+  elements.questions.style.display = elements.answerButton.style.display = "none";
+  elements.restartButton.style.display = "block";
+  updateHighScores();
+}
+
+function updateHighScores() {
+  elements.highScoresList.innerHTML = "";
+  const highScores = JSON.parse(localStorage.getItem("highScores")) || [];
+  highScores.sort((a, b) => b - a).slice(0, 5).forEach(function (score) {
+    var li = document.createElement("li");
+    li.textContent = "Score: " + score;
+    elements.highScoresList.appendChild(li);
+  });
+}
+
+function saveScore(score) {
+  var highScores = JSON.parse(localStorage.getItem("highScores")) || [];
+  highScores.push(score);
+  localStorage.setItem("highScores", JSON.stringify(highScores));
 }
 
 function beginQuiz() {
   quizStarted = false;
-  questionsElement.textContent = "Press 'Start' to begin the quiz.";
-  answerButton.innerHTML = "";
-  messageElement.textContent = "";
-  currentQ = 0;
-  score = 0;
-  const buttons = answerButton.querySelectorAll(".btn");
-  buttons.forEach((button) => {
-    button.style.backgroundColor = "";
-    button.disabled = false;
-  });
-  nextButton.style.display = "none";
-}
-
-function showQuestion() {
-  if (!quizStarted) {
-    beginQuiz();
-    return;
-  }
-
-  const currentQuestion = questions[currentQ];
-  questionsElement.textContent = currentQuestion.question;
-  answerButton.innerHTML = "";
-
-  currentQuestion.answers.forEach((answer) => {
-    const button = document.createElement("button");
-    button.innerText = answer.text;
-    button.classList.add("btn");
-    button.addEventListener("click", () => checkAnswer(answer.correct));
-    answerButton.appendChild(button);
-
-    // Reset the background color of the button to its default state
-    button.style.backgroundColor = "";
-
-    // Add a data-correct attribute to the correct answer button
-    if (answer.correct) {
-      button.setAttribute("data-correct", "true");
-    }
-  });
-
-  if (currentQ === questions.length - 1) {
-    // If it's the last question, show the finish button only if an answer is selected
-    finishButton.style.display = answered ? "block" : "none";
-  } else {
-    finishButton.style.display = "none";
-  }
+  elements.startButton.style.display = "block";
+  elements.nextButton.style.display = elements.restartButton.style.display = "none";
+  elements.endingScreen.style.display = "none";
+  elements.questions.textContent = "Press 'Start' to begin the quiz.";
+  elements.answerButton.innerHTML = "";
+  elements.message.textContent = "";
+  elements.highScoresList.innerHTML = "";
 }
 
 beginQuiz();
