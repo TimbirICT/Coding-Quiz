@@ -160,5 +160,5 @@ font-weight: 600;
 }
 
 .timer {
-    display: none;
+   display: block;
   }

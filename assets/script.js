@@ -84,6 +84,7 @@ var answered = false;
 elements.startButton.addEventListener("click", function () {
   startQuiz();
   showQuestion();
+  startTimer();
 });
 
 elements.nextButton.addEventListener("click", function () {
@@ -120,6 +121,8 @@ function checkAnswer(isCorrect) {
     updateScoreDisplay(isCorrect);
 
     if (currentQ >= questions.length - 1) showEndingScreen();
+
+     if (isCorrect !== true) timeLeft--;
     else elements.nextButton.style.display = "block";
   }
 }
@@ -136,28 +139,23 @@ function startQuiz() {
 }
 
 const timerElement = document.getElementById("timer");
-const questionTime = 10; // 10 seconds per question
-let timeLeft = questionTime;
+let timeLeft = 10;
 let timerInterval;
 
 function startTimer() {
-  timeLeft = questionTime;
   timerElement.textContent = `Time: ${timeLeft} seconds`;
   timerInterval = setInterval(function () {
+    timerElement.style.display = "block";
     timeLeft--;
     if (timeLeft <= 0) {
       clearInterval(timerInterval);
       // Handle when time runs out (e.g., show correct answer or move to the next question)
-      showQuestion(); // For now, move to the next question
+      showEndingScreen(); // For now, move to the next question
     } else {
       timerElement.textContent = `Time: ${timeLeft} seconds`;
+
     }
   }, 1000);
-}
-
-function stopTimer() {
-  clearInterval(timerInterval);
-  timerElement.textContent = "";
 }
 
 function showQuestion() {
@@ -185,12 +183,8 @@ function showQuestion() {
       }
     });
 
-    // Show the timer when questions are displayed
-    const timerElement = document.getElementById("timer");
-    timerElement.style.display = "block";
 
-    // Start the timer
-    startTimer();
+  
 
   } else {
     // If there are no more questions, hide the timer
