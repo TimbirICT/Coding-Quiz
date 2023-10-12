@@ -80,6 +80,7 @@ var currentQ = 0;
 var score = 0;
 var quizStarted = false;
 var answered = false;
+var timerInterval;
 
 elements.startButton.addEventListener("click", function () {
   startQuiz();
@@ -90,16 +91,23 @@ elements.startButton.addEventListener("click", function () {
 elements.nextButton.addEventListener("click", function () {
   if (answered) {
     currentQ++;
+    timeLeft = 11;
     answered = false;
     showQuestion();
-    elements.nextButton.style.display = "none";
+    stopTimer();
+
+    if (currentQ >= questions.length - 1) {
+      elements.nextButton.style.display = "none"; // Hide the "Next" button on the last question
+    }
   }
 });
+
+
 
 elements.restartButton.addEventListener("click", restartQuiz);
 
 function restartQuiz() {
-  startQuiz();
+  location.reload();
 }
 
 function updateScoreDisplay(isCorrect) {
@@ -113,17 +121,31 @@ function checkAnswer(isCorrect) {
 
     buttons.forEach(function (button) {
       button.disabled = true;
-      button.style.backgroundColor = button.getAttribute("data-correct") === "true" ? "green" : "red";
+      if (button.getAttribute("data-correct") === "true") {
+        if (isCorrect) {
+          button.style.backgroundColor = "green";
+        } else {
+          button.style.backgroundColor = "red";
+        }
+      }
     });
 
-    if (isCorrect) score += 10;
+    if (!isCorrect) {
+      showCorrectAnswer();
+    }
+
     answered = true;
     updateScoreDisplay(isCorrect);
 
-    if (currentQ >= questions.length - 1) showEndingScreen();
+    if (currentQ >= questions.length - 1) {
+      showEndingScreen();
+    }
 
-     if (isCorrect !== true) timeLeft--;
-    else elements.nextButton.style.display = "block";
+    if (!isCorrect || timeLeft <= 0) {
+      stopTimer();
+    } else {
+      elements.nextButton.style.display = "block";
+    }
   }
 }
 
@@ -140,22 +162,23 @@ function startQuiz() {
 
 const timerElement = document.getElementById("timer");
 let timeLeft = 10;
-let timerInterval;
 
 function startTimer() {
-  timerElement.textContent = `Time: ${timeLeft} seconds`;
   timerInterval = setInterval(function () {
     timerElement.style.display = "block";
     timeLeft--;
+    timerElement.textContent = `Time: ${timeLeft} seconds`;
     if (timeLeft <= 0) {
       clearInterval(timerInterval);
-      // Handle when time runs out (e.g., show correct answer or move to the next question)
-      showEndingScreen(); // For now, move to the next question
-    } else {
-      timerElement.textContent = `Time: ${timeLeft} seconds`;
-
+      showCorrectAnswer();
     }
   }, 1000);
+}
+
+function showCorrectAnswer() {
+  const correctButton = elements.answerButton.querySelector("button[data-correct='true']");
+  correctButton.style.backgroundColor = "green";
+  elements.message.textContent = "Time's up! Click the correct answer to continue...";
 }
 
 function showQuestion() {
@@ -172,7 +195,7 @@ function showQuestion() {
       button.addEventListener("click", () => {
         if (!answered) {
           checkAnswer(answer.correct);
-          stopTimer(); // Stop the timer when an answer is clicked
+          stopTimer();
         }
       });
 
@@ -182,23 +205,17 @@ function showQuestion() {
         button.setAttribute("data-correct", "true");
       }
     });
-
-
-  
-
   } else {
-    // If there are no more questions, hide the timer
-    const timerElement = document.getElementById("timer");
     timerElement.style.display = "none";
   }
-  }
-
-
+}
 
 function showEndingScreen() {
+  elements.nextButton.style.display = "none";
   elements.endingScreen.style.display = "block";
   elements.questions.style.display = elements.answerButton.style.display = "none";
   elements.restartButton.style.display = "block";
+  elements.nextButton.style.display = "none";
   updateHighScores();
 }
 
